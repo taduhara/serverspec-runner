@@ -143,7 +143,8 @@ namespace :spec do
   end
 
   File.open(ENV['scenario'] || "#{ENV['specroot']}/scenario.yml") do |f|
-    YAML.load_documents(f).each_with_index do |data, idx|
+    idx = 0
+    YAML.load_documents(f) do |data|
       if idx == 0
         scenarios = data
       else
@@ -154,6 +155,8 @@ namespace :spec do
           end
         end
       end
+
+      idx += 1
     end
   end
 
