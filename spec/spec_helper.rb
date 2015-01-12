@@ -4,6 +4,7 @@ require 'net/ssh'
 require 'yaml'
 require 'csv'
 require 'serverspec-runner/util/hash'
+require 'serverspec-runner/util/module'
 
 ssh_opts_default = YAML.load_file(ENV['ssh_options'])
 csv_path = ENV['result_csv']
@@ -102,9 +103,19 @@ RSpec.configure do |c|
   end
 
   c.after(:suite) do
-    CSV.open(csv_path, 'a') do |writer|
-      explains.each_with_index do |v, i|
-        writer << [v, results[i], row_num[i]]
+
+    if Module.class_exists?('Writer', CSV)
+      outfile = File.open(csv_path, 'a')
+      CSV::Writer.generate(outfile) do |writer|
+        explains.each_with_index do |v, i|
+          writer << [v, results[i], row_num[i]]
+        end
+      end
+    else
+      CSV.open(csv_path, 'a') do |writer|
+        explains.each_with_index do |v, i|
+          writer << [v, results[i], row_num[i]]
+        end
       end
     end
   end
