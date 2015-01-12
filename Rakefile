@@ -116,7 +116,7 @@ namespace :spec do
     end
   end
 
-  if !Dir.exists?(ENV['specpath'])
+  if !File.directory?(ENV['specpath'])
     init_specpath(ENV['specpath'])
     exit 0
   end
